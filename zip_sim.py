@@ -318,7 +318,7 @@ if __name__ == "__main__":
     visualizer_group.add_argument('--start-paused', action="store_true", help='Start the simulation paused')
     parser.add_argument('--seed', type=int, help='Seed to use for random number generation')
     args = parser.parse_args()
-
+    print(args.pilot)
     random.seed(args.seed)
     headless = args.headless
     api_mode = len(args.pilot) > 0

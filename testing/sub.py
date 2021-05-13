@@ -1,6 +1,13 @@
-import subprocess
+import struct
+from subprocess import Popen, PIPE
 
-p1 = subprocess.run('ls -la', shell=True, capture_output=True, text=True)
+# Note: This is acting as the simulator
 
-#p1 = p1.stdout.decode()
-print(p1)
+COMMAND_STRUCT = struct.Struct(">f")         # INCOMING
+# TELEMETRY_STRUCT = struct.Struct(">f")   # OUTGOING
+
+pilot = Popen(['python3', 'pub.py'], stdin=PIPE, stdout=PIPE)
+
+while 1:
+    cmd = pilot.stdout.read(COMMAND_STRUCT.size)
+    var = COMMAND_STRUCT.unpack(cmd)
