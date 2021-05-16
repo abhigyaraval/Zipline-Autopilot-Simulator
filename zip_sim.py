@@ -309,8 +309,6 @@ def cast_lidar(start_pos, objects):
 
 if __name__ == "__main__":
 
-    file1 = open("data.txt", 'w')
-
     parser = argparse.ArgumentParser(description='"8-bit" Zip Sim')
     parser.add_argument('pilot', nargs=argparse.REMAINDER, help='A pilot process to run')
     parser.add_argument('--headless', action="store_true", help='Run without visualization')
@@ -320,12 +318,11 @@ if __name__ == "__main__":
     visualizer_group.add_argument('--start-paused', action="store_true", help='Start the simulation paused')
     parser.add_argument('--seed', type=int, help='Seed to use for random number generation')
     args = parser.parse_args()
-    # print(args.pilot)
+
     random.seed(args.seed)
     headless = args.headless
     api_mode = len(args.pilot) > 0
 
-    loop_count = 0
     if api_mode:
         pilot = subprocess.Popen(args.pilot, stdin=subprocess.PIPE, stdout=subprocess.PIPE)
         loop_count = 0  # To count iterations to compute the telemetry timestamp
@@ -410,9 +407,6 @@ if __name__ == "__main__":
                 break
             lateral_airspeed_input, drop_package_commanded_byte, _ = COMMAND_STRUCT.unpack(cmd)
             lateral_airspeed = max(-30.0, min(30.0, lateral_airspeed_input))
-            print("Com[0]: ", lateral_airspeed_input)
-            print("Com[1]: ", drop_package_commanded_byte)
-            print("Comm[2]: ", _)
             drop_package_commanded = bool(drop_package_commanded_byte)
         elif not headless:
             keys = pygame.key.get_pressed()
@@ -516,23 +510,6 @@ if __name__ == "__main__":
                     else:
                         clock.tick(VISUALIZER_RATES[visualizer_rate_index])
                         wait_for_step = False
-        pilot = subprocess.Popen(['python3', 'autopilot.py'], stdin=subprocess.PIPE, stdout=subprocess.PIPE)
-        loop_count+=1
-        print("loop count: ", loop_count)
-        print("Time: ", int(loop_count * DT_SEC * 1e3) & 0xFFFF)
-        print("x_err: ", RECOVERY_X - vehicle.position[0])
-        print("wind_x: ", wind.vector[0])
-        print("wind_y: ", wind.vector[1])
-        print("y_err: ", round((-vehicle.position[1] + WORLD_WIDTH_HALF) % WORLD_WIDTH - WORLD_WIDTH_HALF))
-        print("Lidar out: ", *lidar_samples)
-        pilot.stdin.write(TELEMETRY_STRUCT.pack(int(loop_count * DT_SEC * 1e3) & 0xFFFF,
-                                               round(RECOVERY_X - vehicle.position[0]),
-                                               wind.vector[0],
-                                               wind.vector[1],
-                                               round((-vehicle.position[1] + WORLD_WIDTH_HALF) % WORLD_WIDTH -
-                                                     WORLD_WIDTH_HALF),
-                                               *lidar_samples))
-        pilot.stdin.flush()
 
     if not headless:
         pygame.quit()
@@ -553,9 +530,6 @@ if __name__ == "__main__":
         pilot.stdin.close()
         pilot.stdout.close()
         pilot.wait()
-    pilot.stdin.close()
-    pilot.stdout.close()
-    pilot.wait()
     print("Deliveries: {}".format(len(package_count_by_site)))
     print("ZIPAA Violations: {}".format(sum((x - 1 for x in package_count_by_site.values() if x > 1))))
     sys.exit(result)

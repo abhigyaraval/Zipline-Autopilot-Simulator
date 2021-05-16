@@ -18,8 +18,43 @@ p = [p1, p2, p3]
 
 
 
-while True:
-    tele = sys.stdin.read()
-    time, x_err, wind_x, wind_y, y_err, lidar = TELEMETRY_STRUCT.unpack(tele)
+# logging data for debugging
+file1 = open("data.txt", 'w')
+file1.write("The following data file is recording data from inside the autopilot function!")
 
-    # cmd = sys.stdout.write(COMMAND_STRUCT.pack(airspeed, drop, ctypes.c_uint8(1)))
+drop = 1
+while :
+    tele = sys.stdin.buffer.read(44)
+    # loop, x_err, wind0, wind1, y_err, lidar = TELEMETRY_STRUCT.unpack(tele)
+    loop = str(TELEMETRY_STRUCT.unpack(tele)[0])
+
+    file1.write(loop)
+    file1.write("\n")
+    # Write to command struct
+    airspeed = 13.2256
+    padding = bytes(1)
+
+    sys.stdout.buffer.write(COMMAND_STRUCT.pack(airspeed, drop, padding))
+    sys.stdout.buffer.flush()
+    drop += 1
+    if drop >250:
+        drop = 1
+
+
+
+
+
+
+
+
+
+
+
+
+## Functions to read and process data
+
+def drop(iter):
+    return 1 if iter%200==0 else 0
+
+def Lidar(lidar_data):
+    pass
