@@ -3,11 +3,12 @@ autopilot.py- Program to autopilot the Zipline autonomous vehicle in the prosper
 Author: Abhigya Raval
 """
 
-import sys #sys module is used for communicate with the simulator in binary protocol
-import struct #struct module is used to appropriate the format of incoming and outgoing communication
+import sys # sys module is used for communicate with the simulator in binary protocol
+import struct # struct module is used to appropriate the format of incoming and outgoing communication
 import time
+
 # Functions to read and process data
-def drop_function(iter):
+def drop_package(iter):
     return 1 if iter%200==0 else 0
 
 def Lidar(lidar_data):
@@ -49,9 +50,9 @@ while True:
     # wind_y = tele_data[3]
     # y_err = tele_data[4]
     # lidar = tele_data[5:37]
-    # print("Autopilot in loop#: ", iter)
-    # print(tele_data, flush=True)
-    # print("\n")
+    print("Autopilot in loop#: ", iter)
+    print(tele_data)
+    print("\n")
     sys.stdin.buffer.flush()
     # time.sleep(1/60)
 
@@ -64,14 +65,11 @@ while True:
     #
 #-------------------------------------------------------------------------------------------------------
     # Write to command struct
-    airspeed = 10.2256
-    padding = bytes(1)
-    drop = drop_function(iter)
-    sys.stdout.buffer.write(COMMAND_STRUCT.pack(airspeed, drop, padding))
-    sys.stdout.buffer.flush()
-
-
-
+    # airspeed = 10.2256
+    # padding = bytes(1)
+    # drop = drop_function(iter)
+    # sys.stdout.buffer.write(COMMAND_STRUCT.pack(airspeed, drop, padding))
+    # sys.stdout.buffer.flush()
     if not sys.stdin.buffer.read():
         break   # If not data incoming, break out of the loop
 

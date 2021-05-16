@@ -310,8 +310,8 @@ def cast_lidar(start_pos, objects):
 
 if __name__ == "__main__":
 
-    file1 = open("data.txt", 'w')
-    pilot = subprocess.Popen(['python3', 'autopilot.py'], stdin=subprocess.PIPE)
+    # file1 = open("data.txt", 'w')
+    # pilot = subprocess.Popen(['python3', 'autopilot.py'], stdin=subprocess.PIPE)
     parser = argparse.ArgumentParser(description='"8-bit" Zip Sim')
     parser.add_argument('pilot', nargs=argparse.REMAINDER, help='A pilot process to run')
     parser.add_argument('--headless', action="store_true", help='Run without visualization')
@@ -517,7 +517,9 @@ if __name__ == "__main__":
                     else:
                         clock.tick(VISUALIZER_RATES[visualizer_rate_index])
                         wait_for_step = False
-        # pilot = subprocess.Popen(['python3', 'autopilot.py'], stdin=subprocess.PIPE)
+        if loop_count==1:
+            time.sleep(DT_SEC)
+        pilot = subprocess.Popen(['python3', 'autopilot.py'], stdin=subprocess.PIPE)
         loop_count+=1
         # time.sleep(1)
         # print("loop count: ", loop_count)
