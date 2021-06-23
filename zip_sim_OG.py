@@ -392,6 +392,8 @@ if __name__ == "__main__":
         drop_package_commanded = False
         if api_mode:
             lidar_samples = cast_lidar(vehicle.position, lidar_objects)
+            # print("Vehicle position: x: %2f, y: %2f" % (vehicle.position[0], vehicle.position[1]), flush=True)
+            print(*lidar_samples)
             pilot.stdin.write(TELEMETRY_STRUCT.pack(int(loop_count * DT_SEC * 1e3) & 0xFFFF,
                                                     round(RECOVERY_X - vehicle.position[0]),
                                                     wind.vector[0],

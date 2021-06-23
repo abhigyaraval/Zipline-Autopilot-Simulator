@@ -13,9 +13,11 @@ import sys
 # 31 lidar samples [31 bytes]
 # TELEMETRY_STRUCT = struct.Struct(">f")
 # COMMAND_STRUCT = struct.Struct(">f")
+import time
 
 TELEMETRY_STRUCT = struct.Struct(">Hhffb31B")
 COMMAND_STRUCT = struct.Struct(">fB3s")
+
 
 
 pilot = subprocess.Popen(['python3', 'pub.py'], stdin=subprocess.PIPE, stdout=subprocess.PIPE)
@@ -46,16 +48,17 @@ while result != "Crashed":
             result = "Crashed"  # The pilot process must have exited
             break
         lateral_airspeed_input, drop_package_commanded_byte, _ = COMMAND_STRUCT.unpack(cmd)
-        # print("Com[0]: ", lateral_airspeed_input)
+        print("Main: " + str(loop_count))
+        print("Inner: ", drop_package_commanded_byte)
         # print("Com[1]: ", drop_package_commanded_byte)
         # print("Comm[2]: ", _)
-
+        # time.sleep(1/60)
     except KeyboardInterrupt:
         print("Exiting program. Killing subprocess...")
         # pilot.kill()
         pilot.stdin.close()
         pilot.stdout.close()
-        pilot.wait()
+        # pilot.wait()
         print("Subprocess killed. Exiting program...")
 
 ## Outside loop
